@@ -76,11 +76,11 @@ def compute_retrieval_precision(train_loader, eval_loader, device,
     import time
     start = time.time()
     tgt_encodings, tgt_label_lists = extract_target(eval_loader)
-    prec = compute_topK_average_precision(tgt_encodings, tgt_label_lists,
+    prec, top_k = compute_topK_average_precision(tgt_encodings, tgt_label_lists,
                                           src_codes, src_label_lists,
                                           Codebooks, N_books,
-                                          num_retrieve)
-    return prec
+                                          num_retrieve)           
+    return prec, top_k
 
 
 def pqDist_one(C, N_books, g_x, q_x):
@@ -145,6 +145,6 @@ def compute_topK_average_precision(tgt_encodings, tgt_label_lists,
                          if not gold_set.isdisjoint(candidates)]) / K * 100
         average_precision += precision / tgt_encodings.size(0)
 
-    return average_precision
+    return average_precision, list_topK_nearest_indices
 
 
