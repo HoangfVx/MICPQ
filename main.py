@@ -8,6 +8,8 @@ if __name__ == "__main__":
     else:
         model.load()
         print('Loaded model with: %s' % model.flag_hparams())
-        val_perf, test_perf = model.run_test()
+        val_perf,val_res, test_perf, test_res = model.run_test()
+        print(val_res)
         print('Val:  {:8.2f}'.format(val_perf))
+        print(test_res)
         print('Test: {:8.2f}'.format(test_perf))
