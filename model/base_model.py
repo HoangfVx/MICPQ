@@ -159,24 +159,24 @@ class Base_Model(nn.Module):
     def evaluate(self, database_loader, eval_loader, device, is_val=True):
         self.eval()
         with torch.no_grad():
-            perf = compute_retrieval_precision(database_loader, eval_loader,
+            perf, top_k = compute_retrieval_precision(database_loader, eval_loader,
                                                device, self.encode_continuous,
                                                self.pq_head.C,
                                                self.hparams.N_books,
                                                self.hparams.num_retrieve)
         self.train()
-        return perf
+        return perf, top_k
 
     def run_test(self):
         device = torch.device('cuda' if self.hparams.cuda else 'cpu')
         _, database_loader, val_loader, test_loader = self.data.get_loaders(
             self.hparams.batch_size, self.hparams.num_workers,
             shuffle_train=True, get_test=True)
-        val_perf = self.evaluate(
+        val_perf, val_res = self.evaluate(
             database_loader, val_loader, device, is_val=True)
-        test_perf = self.evaluate(
+        test_perf, test_res = self.evaluate(
             database_loader, test_loader, device, is_val=False)
-        return val_perf, test_perf
+        return val_perf, val_res, test_perf, test_res
 
     def load(self):
         device = torch.device('cuda' if self.hparams.cuda else 'cpu')
